@@ -9,6 +9,40 @@ function mongoDbPlugin() {
   return {
     name: 'mongodb-api',
     configureServer(server) {
+      server.middlewares.use('/api/add-people', async (req, res) => {
+        if (req.method !== 'POST') return res.end();
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString(); });
+        req.on('end', async () => {
+           try {
+              const { date, addedIn, addedOut } = JSON.parse(body);
+              const client = new MongoClient(MONGO_URI);
+              await client.connect();
+              const db = client.db(DB_NAME);
+              if (addedIn > 0) {
+                 await db.collection('stream_0').updateOne(
+                    { _id: "manual_additions" },
+                    { $inc: { [`${date}.in_count`]: addedIn } },
+                    { upsert: true }
+                 );
+              }
+              if (addedOut > 0) {
+                 await db.collection('stream_2').updateOne(
+                    { _id: "manual_additions" },
+                    { $inc: { [`${date}.out_count`]: addedOut } },
+                    { upsert: true }
+                 );
+              }
+              await client.close();
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true }));
+           } catch(e) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: e.message }));
+           }
+        });
+      });
+
       server.middlewares.use('/api/dashboard', async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         
@@ -27,14 +61,18 @@ function mongoDbPlugin() {
              stream2 = db.collection('stream_2');
           } catch(e) {}
           
-          // Fetch the single document dashboard_data
+          // Fetch the single document dashboard_data and manual_additions
           const data0 = await stream0.findOne({ _id: "dashboard_data" });
+          const additions0 = await stream0.findOne({ _id: "manual_additions" });
+          
           const data1 = await stream1.findOne({ _id: "dashboard_data" });
           
           let data2 = null;
+          let additions2 = null;
           if (stream2) {
              try {
                 data2 = await stream2.findOne({ _id: "dashboard_data" });
+                additions2 = await stream2.findOne({ _id: "manual_additions" });
              } catch(e) {}
           }
           
@@ -62,10 +100,11 @@ function mongoDbPlugin() {
           };
 
           if (data0 && latestDate0 && data0[latestDate0]?.stream_0) {
-             // Stream 0: only in_count
-             responsePayload.stream_0 = {
-                in_count: data0[latestDate0].stream_0.in_count
-             };
+             let in_count = data0[latestDate0].stream_0.in_count;
+             if (additions0 && additions0[latestDate0]?.in_count) {
+                 in_count += additions0[latestDate0].in_count;
+             }
+             responsePayload.stream_0 = { in_count };
           }
 
           if (data1 && latestDate1 && data1[latestDate1]?.stream_1) {
@@ -81,10 +120,11 @@ function mongoDbPlugin() {
           if (data2) {
              const latestDate2 = extractDateKey(data2);
              if (latestDate2 && data2[latestDate2]?.stream_2) {
-                 // Stream 2: only out_count
-                 responsePayload.stream_2 = {
-                     out_count: data2[latestDate2].stream_2.out_count
-                 };
+                 let out_count = data2[latestDate2].stream_2.out_count;
+                 if (additions2 && additions2[latestDate2]?.out_count) {
+                     out_count += additions2[latestDate2].out_count;
+                 }
+                 responsePayload.stream_2 = { out_count };
              }
           }
 

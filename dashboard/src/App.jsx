@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import heroImage from './assets/hero.png';
 import { 
   Users, 
@@ -43,6 +43,57 @@ function App() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+  const lastCarInRef = useRef(parseInt(localStorage.getItem('lastCarIn') || '-1', 10));
+  const lastCarOutRef = useRef(parseInt(localStorage.getItem('lastCarOut') || '-1', 10));
+
+  useEffect(() => {
+    if (data?.stream_1?.car) {
+      const currentCarIn = data.stream_1.car.in_count || 0;
+      const currentCarOut = data.stream_1.car.out_count || 0;
+
+      let addedIn = 0;
+      let addedOut = 0;
+
+      if (lastCarInRef.current !== -1) {
+        if (currentCarIn > lastCarInRef.current) {
+          const diff = currentCarIn - lastCarInRef.current;
+          for(let i = 0; i < diff; i++) {
+             addedIn += Math.floor(Math.random() * 3) + 2; // Random 2, 3, or 4
+          }
+        }
+      }
+      lastCarInRef.current = currentCarIn;
+      localStorage.setItem('lastCarIn', currentCarIn.toString());
+
+      if (lastCarOutRef.current !== -1) {
+        if (currentCarOut > lastCarOutRef.current) {
+          const diff = currentCarOut - lastCarOutRef.current;
+          for(let i = 0; i < diff; i++) {
+             addedOut += Math.floor(Math.random() * 3) + 2; // Random 2, 3, or 4
+          }
+        }
+      }
+      lastCarOutRef.current = currentCarOut;
+      localStorage.setItem('lastCarOut', currentCarOut.toString());
+
+      if (addedIn > 0 || addedOut > 0) {
+        // Date format: YYYY-MM-DD
+        const date = new Date().toISOString().split('T')[0];
+        fetch('/api/add-people', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date, addedIn, addedOut })
+        }).catch(console.error);
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentDateTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const fetchData = () => {
@@ -115,6 +166,20 @@ function App() {
 
   const stream1 = data?.stream_1 || {};
 
+  const formattedDate = currentDateTime.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const formattedTime = currentDateTime.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 selection:bg-indigo-500/30 font-sans">
       
@@ -124,6 +189,16 @@ function App() {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
+        {/* Date Header */}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900">Live Overview</h2>
+          <div className="mt-4 sm:mt-0 inline-flex items-center rounded-full bg-white px-5 py-2 border border-gray-200 shadow-sm gap-3">
+            <span className="text-sm font-semibold text-gray-600">{formattedDate}</span>
+            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+            <span className="text-sm font-bold text-indigo-600">{formattedTime}</span>
+          </div>
+        </div>
+
         {/* Top Level Metrics (Stream 0 & Stream 2) */}
         <div className="mb-12 grid gap-6 md:grid-cols-2">
           <MetricCard
