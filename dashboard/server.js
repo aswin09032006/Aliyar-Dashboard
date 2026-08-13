@@ -79,51 +79,211 @@ app.get('/api/dashboard', async (req, res) => {
     
     await client.close();
 
-    // We need to parse out the latest date from the objects.
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     
-    const extractDateKey = (doc) => {
-      if (!doc) return null;
-      const dates = Object.keys(doc).filter(k => dateRegex.test(k)).sort().reverse();
-      return dates.length > 0 ? dates[0] : null;
-    }
+    // Helper to find all unique YYYY-MM-DD keys across docs
+    const getDatesFromDoc = (doc) => doc ? Object.keys(doc).filter(k => dateRegex.test(k)) : [];
+    const dateSet = new Set([
+      ...getDatesFromDoc(data0),
+      ...getDatesFromDoc(data1),
+      ...getDatesFromDoc(data2)
+    ]);
+    
+    // Always ensure current local system date (e.g. 2026-08-14) is present in availableDates
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    dateSet.add(todayStr);
 
-    const latestDate0 = extractDateKey(data0);
-    const latestDate1 = extractDateKey(data1);
-    const latestDate = latestDate0 || latestDate1 || new Date().toISOString().split('T')[0];
+    const availableDates = ['all', ...Array.from(dateSet).sort().reverse()];
 
-    // Format output according to requirements
+    // Determine requested date (default to 'all' for cumulative)
+    const reqDate = req.query.date;
+    const selectedDate = reqDate || 'all';
+
+    // Response structure
     const responsePayload = {
-      date: latestDate,
-      stream_0: null,
-      stream_1: null,
-      stream_2: null
+      date: selectedDate,
+      availableDates,
+      stream_0: { in_count: 0 },
+      stream_1: {
+        car: { in_count: 0, out_count: 0 },
+        motorcycle: { in_count: 0, out_count: 0 },
+        bus: { in_count: 0, out_count: 0 },
+        truck: { in_count: 0, out_count: 0 }
+      },
+      stream_2: { out_count: 0 },
+      stream_0_hourly: {},
+      stream_1_hourly: {},
+      peak_people: null
     };
 
-    if (data0 && latestDate0 && data0[latestDate0]?.stream_0) {
-       let in_count = data0[latestDate0].stream_0.in_count;
-       if (additions0 && additions0[latestDate0]?.in_count) {
-           in_count += additions0[latestDate0].in_count;
-       }
-       responsePayload.stream_0 = { in_count };
+    // --- Stream 0 (People In) ---
+    if (selectedDate === 'all') {
+      if (data0) {
+        Object.keys(data0).filter(k => dateRegex.test(k)).forEach(date => {
+          let in_count = data0[date].stream_0?.in_count || 0;
+          if (additions0 && additions0[date]?.in_count) {
+              in_count += additions0[date].in_count;
+          }
+          responsePayload.stream_0.in_count += in_count;
+          if (data0[date].hourly_data) {
+            Object.keys(data0[date].hourly_data).forEach(hour => {
+              const key = `${date} ${hour}`;
+              if (!responsePayload.stream_0_hourly[key]) {
+                responsePayload.stream_0_hourly[key] = { stream_0: { in_count: 0, out_count: 0 }};
+              }
+              responsePayload.stream_0_hourly[key].stream_0.in_count += data0[date].hourly_data[hour].stream_0?.in_count || 0;
+              responsePayload.stream_0_hourly[key].stream_0.out_count += data0[date].hourly_data[hour].stream_0?.out_count || 0;
+            });
+          }
+        });
+      }
+    } else if (data0 && data0[selectedDate]) {
+      const dayData0 = data0[selectedDate];
+      let in_count = dayData0.stream_0?.in_count || 0;
+      if (additions0 && additions0[selectedDate]?.in_count) {
+          in_count += additions0[selectedDate].in_count;
+      }
+      responsePayload.stream_0.in_count = in_count;
+      if (dayData0.hourly_data) {
+        responsePayload.stream_0_hourly = dayData0.hourly_data;
+      }
     }
 
-    if (data1 && latestDate1 && data1[latestDate1]?.stream_1) {
-       responsePayload.stream_1 = data1[latestDate1].stream_1;
-       if (data1[latestDate1].hourly_data) {
-          responsePayload.stream_1_hourly = data1[latestDate1].hourly_data;
-       }
+    // --- Stream 2 (People Out) ---
+    if (selectedDate === 'all') {
+      if (data2) {
+        Object.keys(data2).filter(k => dateRegex.test(k)).forEach(date => {
+          let out_count = data2[date].stream_2?.out_count || 0;
+          if (additions2 && additions2[date]?.out_count) {
+              out_count += additions2[date].out_count;
+          }
+          responsePayload.stream_2.out_count += out_count;
+        });
+      } else if (data0) {
+        Object.keys(data0).filter(k => dateRegex.test(k)).forEach(date => {
+          let out_count = data0[date].stream_0?.out_count || 0;
+          if (additions2 && additions2[date]?.out_count) {
+              out_count += additions2[date].out_count;
+          }
+          responsePayload.stream_2.out_count += out_count;
+        });
+      }
+    } else if (data2) {
+      const dayData2 = data2[selectedDate];
+      if (dayData2) {
+        let out_count = dayData2.stream_2?.out_count || 0;
+        if (additions2 && additions2[selectedDate]?.out_count) {
+            out_count += additions2[selectedDate].out_count;
+        }
+        responsePayload.stream_2.out_count = out_count;
+      }
+    } else if (data0 && data0[selectedDate]?.stream_0?.out_count !== undefined) {
+      let out_count = data0[selectedDate].stream_0.out_count;
+      if (additions2 && additions2[selectedDate]?.out_count) {
+          out_count += additions2[selectedDate].out_count;
+      }
+      responsePayload.stream_2.out_count = out_count;
+    }
+    // --- Stream 1 (Vehicle Analytics & Hourly Partitioning) ---
+    // Look across data1 documents/date keys to isolate hourly entries for selectedDate
+    // Note: In DB, hours 15:00-23:00 were saved under 2026-08-14 along with 00:00-04:00.
+    // Hours 00:00 - 04:00 belong to Aug 14th; hours 15:00 - 23:00 belong to Aug 13th.
+    let rawHourlyStream1 = {};
+    if (selectedDate === 'all') {
+      if (data1) {
+        Object.keys(data1).filter(k => dateRegex.test(k)).forEach(date => {
+          if (data1[date].hourly_data) {
+            Object.keys(data1[date].hourly_data).forEach(hour => {
+              const hourNum = parseInt(hour.split(':')[0], 10);
+              let trueDate = date;
+              if (date === '2026-08-14' && hourNum >= 15) {
+                trueDate = '2026-08-13';
+              }
+              const key = `${trueDate} ${hour}`;
+              if (!rawHourlyStream1[key]) {
+                rawHourlyStream1[key] = { stream_1: { car: { in_count: 0, out_count: 0 }, motorcycle: { in_count: 0, out_count: 0 }, bus: { in_count: 0, out_count: 0 }, truck: { in_count: 0, out_count: 0 } } };
+              }
+              const s1 = data1[date].hourly_data[hour].stream_1;
+              if (s1) {
+                ['car', 'motorcycle', 'bus', 'truck'].forEach(type => {
+                  if (s1[type]) {
+                    rawHourlyStream1[key].stream_1[type].in_count += (s1[type].in_count || 0);
+                    rawHourlyStream1[key].stream_1[type].out_count += (s1[type].out_count || 0);
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    } else if (data1) {
+      if (data1[selectedDate]?.hourly_data) {
+        rawHourlyStream1 = { ...rawHourlyStream1, ...data1[selectedDate].hourly_data };
+      }
+      // If selectedDate is 2026-08-13, check if 2026-08-14 hourly_data has 15:00-23:00
+      if (selectedDate === '2026-08-13' && data1['2026-08-14']?.hourly_data) {
+        const aug14Hourly = data1['2026-08-14'].hourly_data;
+        Object.keys(aug14Hourly).forEach(hour => {
+          const hourNum = parseInt(hour.split(':')[0], 10);
+          if (hourNum >= 15) {
+            rawHourlyStream1[hour] = aug14Hourly[hour];
+          }
+        });
+      }
     }
 
-    if (data2) {
-       const latestDate2 = extractDateKey(data2);
-       if (latestDate2 && data2[latestDate2]?.stream_2) {
-           let out_count = data2[latestDate2].stream_2.out_count;
-           if (additions2 && additions2[latestDate2]?.out_count) {
-               out_count += additions2[latestDate2].out_count;
-           }
-           responsePayload.stream_2 = { out_count };
-       }
+    // Filter hourly_data according to selectedDate target timeframe
+    const filteredStream1Hourly = {};
+    const vehicleTotals = {
+      car: { in_count: 0, out_count: 0 },
+      motorcycle: { in_count: 0, out_count: 0 },
+      bus: { in_count: 0, out_count: 0 },
+      truck: { in_count: 0, out_count: 0 }
+    };
+
+    Object.keys(rawHourlyStream1).forEach(hour => {
+      const hourNum = parseInt(hour.split(':')[0], 10);
+      let isValidForDate = true;
+      if (selectedDate !== 'all' && selectedDate === '2026-08-14' && hourNum >= 15) {
+        // Evening hours belong to previous day batch in database
+        isValidForDate = false;
+      }
+
+      if (isValidForDate) {
+        filteredStream1Hourly[hour] = rawHourlyStream1[hour];
+        const s1 = rawHourlyStream1[hour]?.stream_1;
+        if (s1) {
+          ['car', 'motorcycle', 'bus', 'truck'].forEach(type => {
+            if (s1[type]) {
+              vehicleTotals[type].in_count += (s1[type].in_count || 0);
+              vehicleTotals[type].out_count += (s1[type].out_count || 0);
+            }
+          });
+        }
+      }
+    });
+
+    responsePayload.stream_1 = vehicleTotals;
+    responsePayload.stream_1_hourly = filteredStream1Hourly;
+
+    // --- Peak People Calculation ---
+    let peakHour = null;
+    let maxPeopleIn = -1;
+    const combinedPeopleHourly = responsePayload.stream_0_hourly;
+    Object.keys(combinedPeopleHourly).forEach(hour => {
+      const inCount = combinedPeopleHourly[hour]?.stream_0?.in_count || 0;
+      if (inCount > maxPeopleIn) {
+        maxPeopleIn = inCount;
+        peakHour = hour;
+      }
+    });
+
+    if (peakHour && maxPeopleIn >= 0) {
+      responsePayload.peak_people = {
+        time: peakHour,
+        in_count: maxPeopleIn
+      };
     }
 
     res.json(responsePayload);

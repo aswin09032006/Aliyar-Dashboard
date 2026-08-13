@@ -1,49 +1,245 @@
 [
     {
         "_id": "dashboard_data",
+        "2026-08-13": {
+            "hourly_data": {
+                "15:00": {
+                    "stream_0": {
+                        "in_count": 1,
+                        "out_count": 3
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
+                    }
+                },
+                "16:00": {
+                    "stream_0": {
+                        "in_count": 61,
+                        "out_count": 77
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
+                    }
+                },
+                "17:00": {
+                    "stream_0": {
+                        "in_count": 153,
+                        "out_count": 92
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
+                    }
+                },
+                "18:00": {
+                    "stream_0": {
+                        "in_count": 81,
+                        "out_count": 43
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
+                    }
+                },
+                "19:00": {
+                    "stream_0": {
+                        "in_count": 179,
+                        "out_count": 62
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
+                    }
+                },
+                "20:00": {
+                    "stream_0": {
+                        "in_count": 113,
+                        "out_count": 118
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
+                    }
+                },
+                "21:00": {
+                    "stream_0": {
+                        "in_count": 121,
+                        "out_count": 68
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
+                    }
+                },
+                "22:00": {
+                    "stream_0": {
+                        "in_count": 95,
+                        "out_count": 39
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
+                    }
+                },
+                "23:00": {
+                    "stream_0": {
+                        "in_count": 53,
+                        "out_count": 40
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
+                    }
+                }
+            },
+            "stream_0": {
+                "in_count": 857,
+                "out_count": 542
+            },
+            "stream_1": {
+                "in_count": 0,
+                "out_count": 0
+            },
+            "stream_2": {
+                "in_count": 0,
+                "out_count": 0
+            }
+        },
         "live_data": {
             "streams": {
                 "stream_0": {
                     "waiting_count": 0,
                     "waiting_details": []
+                },
+                "stream_1": {
+                    "waiting_count": 0,
+                    "waiting_details": []
+                },
+                "stream_2": {
+                    "waiting_count": 0,
+                    "waiting_details": []
                 }
             },
-            "last_updated": "2026-08-13 14:59:00"
+            "last_updated": "2026-08-14 04:01:10"
         },
-        "2026-08-13": {
-            "stream_0": {
-                "in_count": 150,
-                "out_count": 110
-            },
+        "2026-08-14": {
             "hourly_data": {
-                "09:00": {
+                "00:00": {
                     "stream_0": {
-                        "in_count": 30,
-                        "out_count": 10
+                        "in_count": 12,
+                        "out_count": 14
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
                     }
                 },
-                "10:00": {
+                "01:00": {
                     "stream_0": {
-                        "in_count": 50,
-                        "out_count": 30
+                        "in_count": 6,
+                        "out_count": 9
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
                     }
                 },
-                "11:00": {
+                "03:00": {
                     "stream_0": {
-                        "in_count": 40,
-                        "out_count": 40
+                        "in_count": 18,
+                        "out_count": 26
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
                     }
                 },
-                "12:00": {
+                "04:00": {
                     "stream_0": {
-                        "in_count": 30,
-                        "out_count": 30
+                        "in_count": 2,
+                        "out_count": 0
+                    },
+                    "stream_1": {
+                        "in_count": 0,
+                        "out_count": 0
+                    },
+                    "stream_2": {
+                        "in_count": 0,
+                        "out_count": 0
                     }
                 }
+            },
+            "stream_0": {
+                "in_count": 38,
+                "out_count": 49
+            },
+            "stream_1": {
+                "in_count": 0,
+                "out_count": 0
+            },
+            "stream_2": {
+                "in_count": 0,
+                "out_count": 0
             }
         },
         "last_synced": {
-            "$date": "2026-08-13T09:36:57.331Z"
+            "$date": "2026-08-13T22:31:10.729Z"
+        }
+    },
+    {
+        "_id": "manual_additions",
+        "2026-08-13": {
+            "in_count": 124
         }
     }
 ]

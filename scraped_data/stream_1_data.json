@@ -8,92 +8,292 @@
                     "waiting_details": []
                 }
             },
-            "last_updated": "2026-08-13 14:36:08"
+            "last_updated": "2026-08-14 04:01:10"
         },
-        "2026-08-13": {
+        "2026-08-14": {
             "stream_1": {
                 "car": {
-                    "in_count": 142,
-                    "out_count": 120
+                    "in_count": 81,
+                    "out_count": 68
                 },
                 "motorcycle": {
-                    "in_count": 45,
-                    "out_count": 30
+                    "in_count": 51,
+                    "out_count": 34
                 },
                 "bus": {
-                    "in_count": 12,
-                    "out_count": 10
+                    "in_count": 5,
+                    "out_count": 6
                 },
                 "truck": {
-                    "in_count": 28,
-                    "out_count": 25
+                    "in_count": 12,
+                    "out_count": 8
                 }
             },
             "hourly_data": {
-                "12:00": {
+                "00:00": {
                     "stream_1": {
                         "car": {
-                            "in_count": 42,
-                            "out_count": 35
+                            "in_count": 1,
+                            "out_count": 0
                         },
                         "motorcycle": {
-                            "in_count": 15,
-                            "out_count": 10
+                            "in_count": 0,
+                            "out_count": 0
                         },
                         "bus": {
-                            "in_count": 4,
-                            "out_count": 3
+                            "in_count": 0,
+                            "out_count": 0
                         },
                         "truck": {
-                            "in_count": 8,
-                            "out_count": 7
+                            "in_count": 0,
+                            "out_count": 0
                         }
                     }
                 },
-                "13:00": {
+                "01:00": {
                     "stream_1": {
                         "car": {
-                            "in_count": 50,
-                            "out_count": 45
+                            "in_count": 0,
+                            "out_count": 0
                         },
                         "motorcycle": {
-                            "in_count": 20,
-                            "out_count": 12
+                            "in_count": 0,
+                            "out_count": 0
                         },
                         "bus": {
+                            "in_count": 0,
+                            "out_count": 0
+                        },
+                        "truck": {
+                            "in_count": 0,
+                            "out_count": 0
+                        }
+                    }
+                },
+                "03:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 1,
+                            "out_count": 0
+                        },
+                        "motorcycle": {
+                            "in_count": 0,
+                            "out_count": 0
+                        },
+                        "bus": {
+                            "in_count": 0,
+                            "out_count": 0
+                        },
+                        "truck": {
+                            "in_count": 0,
+                            "out_count": 0
+                        }
+                    }
+                },
+                "04:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 0,
+                            "out_count": 0
+                        },
+                        "motorcycle": {
+                            "in_count": 0,
+                            "out_count": 0
+                        },
+                        "bus": {
+                            "in_count": 0,
+                            "out_count": 0
+                        },
+                        "truck": {
+                            "in_count": 0,
+                            "out_count": 0
+                        }
+                    }
+                },
+                "15:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 4,
+                            "out_count": 1
+                        },
+                        "motorcycle": {
+                            "in_count": 6,
+                            "out_count": 3
+                        },
+                        "bus": {
+                            "in_count": 1,
+                            "out_count": 0
+                        },
+                        "truck": {
+                            "in_count": 2,
+                            "out_count": 0
+                        }
+                    }
+                },
+                "16:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 18,
+                            "out_count": 4
+                        },
+                        "motorcycle": {
+                            "in_count": 6,
+                            "out_count": 1
+                        },
+                        "bus": {
+                            "in_count": 1,
+                            "out_count": 2
+                        },
+                        "truck": {
+                            "in_count": 4,
+                            "out_count": 1
+                        }
+                    }
+                },
+                "17:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 21,
+                            "out_count": 1
+                        },
+                        "motorcycle": {
+                            "in_count": 11,
+                            "out_count": 6
+                        },
+                        "bus": {
+                            "in_count": 1,
+                            "out_count": 0
+                        },
+                        "truck": {
+                            "in_count": 1,
+                            "out_count": 1
+                        }
+                    }
+                },
+                "18:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 12,
+                            "out_count": 4
+                        },
+                        "motorcycle": {
+                            "in_count": 8,
+                            "out_count": 10
+                        },
+                        "bus": {
+                            "in_count": 1,
+                            "out_count": 0
+                        },
+                        "truck": {
+                            "in_count": 1,
+                            "out_count": 0
+                        }
+                    }
+                },
+                "19:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 6,
+                            "out_count": 7
+                        },
+                        "motorcycle": {
+                            "in_count": 6,
+                            "out_count": 3
+                        },
+                        "bus": {
+                            "in_count": 0,
+                            "out_count": 0
+                        },
+                        "truck": {
+                            "in_count": 1,
+                            "out_count": 3
+                        }
+                    }
+                },
+                "20:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 5,
+                            "out_count": 12
+                        },
+                        "motorcycle": {
                             "in_count": 5,
                             "out_count": 4
                         },
+                        "bus": {
+                            "in_count": 0,
+                            "out_count": 0
+                        },
                         "truck": {
-                            "in_count": 12,
-                            "out_count": 10
+                            "in_count": 2,
+                            "out_count": 0
                         }
                     }
                 },
-                "14:00": {
+                "21:00": {
                     "stream_1": {
                         "car": {
-                            "in_count": 50,
-                            "out_count": 40
+                            "in_count": 1,
+                            "out_count": 18
                         },
                         "motorcycle": {
-                            "in_count": 10,
-                            "out_count": 8
+                            "in_count": 9,
+                            "out_count": 7
                         },
                         "bus": {
-                            "in_count": 3,
-                            "out_count": 3
+                            "in_count": 0,
+                            "out_count": 1
                         },
                         "truck": {
-                            "in_count": 8,
-                            "out_count": 8
+                            "in_count": 0,
+                            "out_count": 1
+                        }
+                    }
+                },
+                "22:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 10,
+                            "out_count": 15
+                        },
+                        "motorcycle": {
+                            "in_count": 0,
+                            "out_count": 0
+                        },
+                        "bus": {
+                            "in_count": 1,
+                            "out_count": 2
+                        },
+                        "truck": {
+                            "in_count": 1,
+                            "out_count": 0
+                        }
+                    }
+                },
+                "23:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 2,
+                            "out_count": 6
+                        },
+                        "motorcycle": {
+                            "in_count": 0,
+                            "out_count": 0
+                        },
+                        "bus": {
+                            "in_count": 0,
+                            "out_count": 1
+                        },
+                        "truck": {
+                            "in_count": 0,
+                            "out_count": 2
                         }
                     }
                 }
             }
         },
         "last_synced": {
-            "$date": "2026-08-13T09:36:57.394Z"
+            "$date": "2026-08-13T22:31:10.774Z"
         }
     }
 ]

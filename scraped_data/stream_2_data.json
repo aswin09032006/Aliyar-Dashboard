@@ -3,14 +3,62 @@
         "_id": "dashboard_data",
         "2026-08-13": {
             "stream_2": {
-                "in_count": 4,
-                "out_count": 2
+                "in_count": 80,
+                "out_count": 159
             },
             "hourly_data": {
                 "15:00": {
                     "stream_2": {
-                        "in_count": 4,
-                        "out_count": 2
+                        "in_count": 9,
+                        "out_count": 12
+                    }
+                },
+                "16:00": {
+                    "stream_2": {
+                        "out_count": 12,
+                        "in_count": 8
+                    }
+                },
+                "17:00": {
+                    "stream_2": {
+                        "in_count": 16,
+                        "out_count": 29
+                    }
+                },
+                "18:00": {
+                    "stream_2": {
+                        "out_count": 57,
+                        "in_count": 8
+                    }
+                },
+                "19:00": {
+                    "stream_2": {
+                        "out_count": 7,
+                        "in_count": 6
+                    }
+                },
+                "20:00": {
+                    "stream_2": {
+                        "out_count": 1,
+                        "in_count": 1
+                    }
+                },
+                "21:00": {
+                    "stream_2": {
+                        "in_count": 10,
+                        "out_count": 25
+                    }
+                },
+                "22:00": {
+                    "stream_2": {
+                        "out_count": 13,
+                        "in_count": 12
+                    }
+                },
+                "23:00": {
+                    "stream_2": {
+                        "in_count": 10,
+                        "out_count": 3
                     }
                 }
             }
@@ -22,10 +70,30 @@
                     "waiting_details": []
                 }
             },
-            "last_updated": "2026-08-13 15:27:03"
+            "last_updated": "2026-08-14 04:05:31"
+        },
+        "2026-08-14": {
+            "stream_2": {
+                "in_count": 1,
+                "out_count": 1
+            },
+            "hourly_data": {
+                "03:00": {
+                    "stream_2": {
+                        "out_count": 1,
+                        "in_count": 1
+                    }
+                }
+            }
         },
         "last_synced": {
-            "$date": "2026-08-13T09:57:50.695Z"
+            "$date": "2026-08-13T22:35:31.948Z"
+        }
+    },
+    {
+        "_id": "manual_additions",
+        "2026-08-13": {
+            "out_count": 129
         }
     }
 ]
