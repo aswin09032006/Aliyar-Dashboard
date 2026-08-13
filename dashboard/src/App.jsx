@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import heroImage from './assets/hero.png';
 import creozenLogo from './assets/CREOZEN.png';
 import bitLogo from './assets/cropped-bit_logo.png';
@@ -79,9 +79,6 @@ function App() {
   const [selectedDate, setSelectedDate] = useState('');
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
-  const lastCarInRef = useRef(parseInt(localStorage.getItem('lastCarIn') || '-1', 10));
-  const lastCarOutRef = useRef(parseInt(localStorage.getItem('lastCarOut') || '-1', 10));
-
   const fetchData = (dateToFetch) => {
     if (!data) setLoading(true);
     const url = dateToFetch ? `/api/dashboard?date=${dateToFetch}` : '/api/dashboard';
@@ -103,49 +100,6 @@ function App() {
         setLoading(false);
       });
   };
-
-  useEffect(() => {
-    if (data?.stream_1?.car) {
-      const currentCarIn = data.stream_1.car.in_count || 0;
-      const currentCarOut = data.stream_1.car.out_count || 0;
-
-      let addedIn = 0;
-      let addedOut = 0;
-
-      if (lastCarInRef.current !== -1) {
-        if (currentCarIn > lastCarInRef.current) {
-          const diff = currentCarIn - lastCarInRef.current;
-          for(let i = 0; i < diff; i++) {
-             addedIn += Math.floor(Math.random() * 3) + 2; // Random 2, 3, or 4
-          }
-        }
-      }
-      lastCarInRef.current = currentCarIn;
-      localStorage.setItem('lastCarIn', currentCarIn.toString());
-
-      if (lastCarOutRef.current !== -1) {
-        if (currentCarOut > lastCarOutRef.current) {
-          const diff = currentCarOut - lastCarOutRef.current;
-          for(let i = 0; i < diff; i++) {
-             addedOut += Math.floor(Math.random() * 3) + 2; // Random 2, 3, or 4
-          }
-        }
-      }
-      lastCarOutRef.current = currentCarOut;
-      localStorage.setItem('lastCarOut', currentCarOut.toString());
-
-      if (addedIn > 0 || addedOut > 0) {
-        // Date format: YYYY-MM-DD using local browser time (IST aligned)
-        const now = new Date();
-        const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-        fetch('/api/add-people', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ date, addedIn, addedOut })
-        }).catch(console.error);
-      }
-    }
-  }, [data]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentDateTime(new Date()), 1000);
