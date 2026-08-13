@@ -1,0 +1,99 @@
+[
+    {
+        "_id": "dashboard_data",
+        "live_data": {
+            "streams": {
+                "stream_1": {
+                    "waiting_count": 0,
+                    "waiting_details": []
+                }
+            },
+            "last_updated": "2026-08-13 14:36:08"
+        },
+        "2026-08-13": {
+            "stream_1": {
+                "car": {
+                    "in_count": 142,
+                    "out_count": 120
+                },
+                "motorcycle": {
+                    "in_count": 45,
+                    "out_count": 30
+                },
+                "bus": {
+                    "in_count": 12,
+                    "out_count": 10
+                },
+                "truck": {
+                    "in_count": 28,
+                    "out_count": 25
+                }
+            },
+            "hourly_data": {
+                "12:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 42,
+                            "out_count": 35
+                        },
+                        "motorcycle": {
+                            "in_count": 15,
+                            "out_count": 10
+                        },
+                        "bus": {
+                            "in_count": 4,
+                            "out_count": 3
+                        },
+                        "truck": {
+                            "in_count": 8,
+                            "out_count": 7
+                        }
+                    }
+                },
+                "13:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 50,
+                            "out_count": 45
+                        },
+                        "motorcycle": {
+                            "in_count": 20,
+                            "out_count": 12
+                        },
+                        "bus": {
+                            "in_count": 5,
+                            "out_count": 4
+                        },
+                        "truck": {
+                            "in_count": 12,
+                            "out_count": 10
+                        }
+                    }
+                },
+                "14:00": {
+                    "stream_1": {
+                        "car": {
+                            "in_count": 50,
+                            "out_count": 40
+                        },
+                        "motorcycle": {
+                            "in_count": 10,
+                            "out_count": 8
+                        },
+                        "bus": {
+                            "in_count": 3,
+                            "out_count": 3
+                        },
+                        "truck": {
+                            "in_count": 8,
+                            "out_count": 8
+                        }
+                    }
+                }
+            }
+        },
+        "last_synced": {
+            "$date": "2026-08-13T09:36:57.394Z"
+        }
+    }
+]

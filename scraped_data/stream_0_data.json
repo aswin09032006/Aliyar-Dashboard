@@ -1,0 +1,49 @@
+[
+    {
+        "_id": "dashboard_data",
+        "live_data": {
+            "streams": {
+                "stream_0": {
+                    "waiting_count": 0,
+                    "waiting_details": []
+                }
+            },
+            "last_updated": "2026-08-13 14:59:00"
+        },
+        "2026-08-13": {
+            "stream_0": {
+                "in_count": 150,
+                "out_count": 110
+            },
+            "hourly_data": {
+                "09:00": {
+                    "stream_0": {
+                        "in_count": 30,
+                        "out_count": 10
+                    }
+                },
+                "10:00": {
+                    "stream_0": {
+                        "in_count": 50,
+                        "out_count": 30
+                    }
+                },
+                "11:00": {
+                    "stream_0": {
+                        "in_count": 40,
+                        "out_count": 40
+                    }
+                },
+                "12:00": {
+                    "stream_0": {
+                        "in_count": 30,
+                        "out_count": 30
+                    }
+                }
+            }
+        },
+        "last_synced": {
+            "$date": "2026-08-13T09:36:57.331Z"
+        }
+    }
+]
