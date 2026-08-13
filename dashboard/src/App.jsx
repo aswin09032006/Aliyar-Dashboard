@@ -45,20 +45,27 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/api/dashboard')
-      .then(res => {
-        if (!res.ok) throw new Error('Network response was not ok');
-        return res.json();
-      })
-      .then(json => {
-        setData(json);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch dashboard data:", err);
-        setError(err.message);
-        setLoading(false);
-      });
+    const fetchData = () => {
+      fetch('/api/dashboard')
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.json();
+        })
+        .then(json => {
+          setData(json);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Failed to fetch dashboard data:", err);
+          setError(err.message);
+          setLoading(false);
+        });
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
