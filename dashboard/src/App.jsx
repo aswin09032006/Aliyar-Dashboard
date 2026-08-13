@@ -47,8 +47,8 @@ function MetricCard({ title, icon, value, colorClass, subtitle }) {
 function formatDateLabel(dateStr) {
   if (!dateStr) return '';
   if (dateStr === 'all') return 'All Time (Cumulative)';
-  const dateObj = new Date(dateStr + 'T00:00:00');
-  const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+  const dateObj = new Date(dateStr + 'T00:00:00+05:30');
+  const options = { timeZone: 'Asia/Kolkata', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
   const formatted = dateObj.toLocaleDateString('en-US', options);
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -135,8 +135,9 @@ function App() {
       localStorage.setItem('lastCarOut', currentCarOut.toString());
 
       if (addedIn > 0 || addedOut > 0) {
-        // Date format: YYYY-MM-DD
-        const date = new Date().toISOString().split('T')[0];
+        // Date format: YYYY-MM-DD using local browser time (IST aligned)
+        const now = new Date();
+        const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         fetch('/api/add-people', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -226,7 +227,11 @@ function App() {
   const stream1 = data?.stream_1 || {};
   const availableDates = data?.availableDates || [data?.date];
 
+  const totalVehiclesIn = (stream1?.car?.in_count || 0) + (stream1?.motorcycle?.in_count || 0) + (stream1?.bus?.in_count || 0) + (stream1?.truck?.in_count || 0);
+  const totalVehiclesOut = (stream1?.car?.out_count || 0) + (stream1?.motorcycle?.out_count || 0) + (stream1?.bus?.out_count || 0) + (stream1?.truck?.out_count || 0);
+
   const formattedDate = currentDateTime.toLocaleDateString('en-US', {
+    timeZone: 'Asia/Kolkata',
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -234,6 +239,7 @@ function App() {
   });
 
   const formattedTime = currentDateTime.toLocaleTimeString('en-US', {
+    timeZone: 'Asia/Kolkata',
     hour: 'numeric',
     minute: '2-digit',
     second: '2-digit',
@@ -313,7 +319,27 @@ function App() {
             </div>
           </div>
           
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            {/* Total Vehicles */}
+            <div className="rounded-3xl bg-indigo-50 p-6 border border-indigo-100 shadow-sm relative overflow-hidden">
+              <div className="mb-6 flex items-center justify-between relative z-10">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-white shadow-xs"><Activity className="h-5 w-5 text-indigo-600" /></div>
+                  <h4 className="font-semibold text-indigo-900">All Vehicles</h4>
+                </div>
+              </div>
+              <div className="flex justify-between border-t border-indigo-200/60 pt-5 relative z-10">
+                <div>
+                  <p className="text-xs font-bold text-indigo-500 mb-1 tracking-wider">IN</p>
+                  <p className="text-3xl font-bold text-indigo-700">{totalVehiclesIn}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-bold text-indigo-500 mb-1 tracking-wider">OUT</p>
+                  <p className="text-3xl font-bold text-indigo-700">{totalVehiclesOut}</p>
+                </div>
+              </div>
+            </div>
+
             {/* Cars */}
             <div className="rounded-3xl bg-gray-50 p-6 border border-gray-100 shadow-sm">
               <div className="mb-6 flex items-center justify-between">
