@@ -174,8 +174,7 @@ function App() {
     const s2Out = data?.stream_2_hourly?.[time]?.stream_2?.out_count || data?.stream_0_hourly?.[time]?.stream_0?.out_count || 0;
     peopleChartData.push({
       time,
-      "People In": s0In,
-      "People Out": s2Out
+      "People In": s0In
     });
   });
 
@@ -284,21 +283,14 @@ function App() {
           </div>
         </div>
 
-        {/* Top Level Metrics (People In & People Out) */}
-        <div className="mb-10 grid gap-6 md:grid-cols-2">
+        {/* Top Level Metrics (People In) */}
+        <div className="mb-10 max-w-xl mx-auto">
           <MetricCard
             title="People In"
             value={data?.stream_0?.in_count}
             subtitle={`Selected date: ${data?.date}`}
             icon={<ArrowBigDown className="h-8 w-8 text-indigo-600" />}
             colorClass="bg-indigo-50"
-          />
-          <MetricCard
-            title="People Out"
-            value={data?.stream_2?.out_count !== undefined ? data.stream_2.out_count : 0}
-            subtitle={`Selected date: ${data?.date}`}
-            icon={<ArrowBigUp className="h-8 w-8 text-emerald-600" />}
-            colorClass="bg-emerald-50"
           />
         </div>
 
@@ -455,7 +447,6 @@ function App() {
                     />
                     <Legend wrapperStyle={{ paddingTop: '15px' }} />
                     <Bar dataKey="People In" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="People Out" fill="#10b981" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
