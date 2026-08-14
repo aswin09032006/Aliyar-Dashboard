@@ -14,7 +14,8 @@ import {
   ArrowBigUp,
   Calendar,
   Flame,
-  Clock
+  Clock,
+  Filter
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -215,7 +216,7 @@ function App() {
           {/* Top Row: Title & Clock on Left, Logos & Wording on Right */}
           <div className="flex flex-row items-center justify-between gap-2 sm:gap-4">
             {/* Left Column: Title & Time Badge */}
-            <div className="flex flex-col gap-1.5 min-w-0">
+            <div className="flex flex-col gap-1.5 min-w-0 sm:flex-1">
               <h1 className="text-lg sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight whitespace-nowrap">
                 Live Analytics
               </h1>
@@ -226,8 +227,8 @@ function App() {
               </div>
             </div>
 
-            {/* Right Column: Logos on Top, Text Below */}
-            <div className="flex flex-col items-end text-right gap-1 flex-shrink-0">
+            {/* Center Column (Desktop) / Right Column (Mobile): Logos & Wording */}
+            <div className="flex flex-col items-end sm:items-center text-right sm:text-center gap-1 flex-shrink-0">
               <div className="flex items-center gap-1.5 sm:gap-2.5 bg-gray-50 px-2 sm:px-3 py-1 rounded-xl border border-gray-200/80">
                 <img src={creozenLogo} alt="Creozen" className="h-5 sm:h-7 w-auto object-contain" />
                 <span className="text-[10px] sm:text-xs font-bold text-gray-400">×</span>
@@ -237,24 +238,44 @@ function App() {
                 Counting Organized and Managed by
               </span>
             </div>
+
+            {/* Right Column for Desktop Centering (Date Filter) */}
+            <div className="hidden sm:flex sm:flex-1 justify-end items-center">
+               <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2 shadow-inner hover:border-indigo-400 transition-colors w-auto min-w-[200px]">
+                 <Calendar className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+                 <label htmlFor="date-select-desktop" className="sr-only">Select Date</label>
+                 <select
+                   id="date-select-desktop"
+                   value={selectedDate || data?.date || ''}
+                   onChange={handleDateChange}
+                   className="bg-transparent font-medium text-gray-800 text-sm focus:outline-none cursor-pointer w-full"
+                 >
+                   {availableDates.map(date => (
+                     <option key={`desktop-${date}`} value={date}>
+                       {formatDateLabel(date)}
+                     </option>
+                   ))}
+                 </select>
+               </div>
+            </div>
           </div>
 
-          {/* Bottom Row: Date Filter */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-t border-gray-100 pt-3 gap-2">
+          {/* Bottom Row (Mobile Only): Date Filter */}
+          <div className="flex sm:hidden flex-col border-t border-gray-100 pt-3 gap-2">
              <p className="text-xs text-gray-500 flex items-center gap-1.5 font-medium">
-               <Clock className="w-3.5 h-3.5 text-indigo-500" /> Filter metrics by date
+               <Filter className="w-3.5 h-3.5 text-indigo-500" /> Filter metrics by date
              </p>
-             <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2 shadow-inner hover:border-indigo-400 transition-colors w-full sm:w-auto min-w-[220px]">
+             <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2 shadow-inner hover:border-indigo-400 transition-colors w-full">
                <Calendar className="w-4 h-4 text-indigo-600 flex-shrink-0" />
-               <label htmlFor="date-select" className="sr-only">Select Date</label>
+               <label htmlFor="date-select-mobile" className="sr-only">Select Date</label>
                <select
-                 id="date-select"
+                 id="date-select-mobile"
                  value={selectedDate || data?.date || ''}
                  onChange={handleDateChange}
-                 className="bg-transparent font-medium text-gray-800 text-xs sm:text-sm focus:outline-none cursor-pointer w-full"
+                 className="bg-transparent font-medium text-gray-800 text-xs focus:outline-none cursor-pointer w-full"
                >
                  {availableDates.map(date => (
-                   <option key={date} value={date}>
+                   <option key={`mobile-${date}`} value={date}>
                      {formatDateLabel(date)}
                    </option>
                  ))}
