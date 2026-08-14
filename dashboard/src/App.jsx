@@ -210,36 +210,41 @@ function App() {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
         {/* Top Header & Date Filter Bar */}
-        <div className="mb-6 sm:mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between rounded-2xl bg-white p-4 sm:p-6 border border-gray-200 shadow-sm gap-4 sm:gap-6">
+        <div className="mb-6 sm:mb-8 flex flex-col gap-4 rounded-2xl bg-white p-4 sm:p-6 border border-gray-200 shadow-sm">
           
-          {/* Left Block: Title & Live Clock */}
-          <div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-              Live Analytics Overview
-            </h1>
-            <div className="mt-2 inline-flex flex-wrap items-center rounded-full bg-gray-50 px-3.5 py-1.5 border border-gray-200 gap-2">
-              <span className="text-xs font-semibold text-gray-600">{formattedDate}</span>
-              <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-              <span className="text-xs font-bold text-indigo-600">{formattedTime}</span>
+          {/* Top Row: Title & Clock on Left, Logos & Wording on Right */}
+          <div className="flex flex-row items-center justify-between gap-2 sm:gap-4">
+            {/* Left Column: Title & Time Badge */}
+            <div className="flex flex-col gap-1.5 min-w-0">
+              <h1 className="text-lg sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight whitespace-nowrap">
+                Live Analytics
+              </h1>
+              <div className="inline-flex flex-nowrap items-center rounded-full bg-gray-50 px-2.5 sm:px-3.5 py-1 border border-gray-200 gap-1.5 sm:gap-2 self-start whitespace-nowrap overflow-hidden text-ellipsis">
+                <span className="text-[10px] sm:text-xs font-semibold text-gray-600">{formattedDate}</span>
+                <span className="w-1 h-1 flex-shrink-0 rounded-full bg-gray-300"></span>
+                <span className="text-[10px] sm:text-xs font-bold text-indigo-600">{formattedTime}</span>
+              </div>
+            </div>
+
+            {/* Right Column: Logos on Top, Text Below */}
+            <div className="flex flex-col items-end text-right gap-1 flex-shrink-0">
+              <div className="flex items-center gap-1.5 sm:gap-2.5 bg-gray-50 px-2 sm:px-3 py-1 rounded-xl border border-gray-200/80">
+                <img src={creozenLogo} alt="Creozen" className="h-5 sm:h-7 w-auto object-contain" />
+                <span className="text-[10px] sm:text-xs font-bold text-gray-400">×</span>
+                <img src={bitLogo} alt="Bannari Amman Institute of Technology" className="h-8 sm:h-11 w-auto object-contain" />
+              </div>
+              <span className="hidden sm:block font-medium text-gray-500 text-xs tracking-tight">
+                Counting Organized and Managed by
+              </span>
             </div>
           </div>
 
-          {/* Center Block: Organizers Branding (Centered in Mobile & Desktop) */}
-          <div className="flex flex-col items-center text-center justify-center gap-1.5 text-xs text-gray-500 border-t border-gray-100 pt-3 lg:border-t-0 lg:pt-0 w-full lg:w-auto">
-            <span className="font-medium text-gray-500 text-[11px] sm:text-xs">Counting Organized and Managed by</span>
-            <div className="flex items-center gap-2.5 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-200/80">
-              <img src={creozenLogo} alt="Creozen" className="h-6 sm:h-7 w-auto object-contain" />
-              <span className="text-xs font-bold text-gray-400">×</span>
-              <img src={bitLogo} alt="Bannari Amman Institute of Technology" className="h-9 sm:h-11 w-auto object-contain" />
-            </div>
-          </div>
-
-          {/* Right Block: Date Filter */}
-          <div className="flex flex-col gap-1.5 w-full lg:w-auto lg:items-end border-t border-gray-100 pt-3 lg:border-t-0 lg:pt-0">
+          {/* Bottom Row: Date Filter */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-t border-gray-100 pt-3 gap-2">
              <p className="text-xs text-gray-500 flex items-center gap-1.5 font-medium">
                <Clock className="w-3.5 h-3.5 text-indigo-500" /> Filter metrics by date
              </p>
-             <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 shadow-inner hover:border-indigo-400 transition-colors w-full sm:w-auto min-w-[220px]">
+             <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2 shadow-inner hover:border-indigo-400 transition-colors w-full sm:w-auto min-w-[220px]">
                <Calendar className="w-4 h-4 text-indigo-600 flex-shrink-0" />
                <label htmlFor="date-select" className="sr-only">Select Date</label>
                <select

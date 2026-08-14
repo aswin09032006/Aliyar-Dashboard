@@ -50,66 +50,71 @@ app.get('/api/dashboard', async (req, res) => {
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
     // --- Car-to-People Server-Side Tracking ---
-    // For every new car IN/OUT, generate 2-4 random people.
+    // For every new car IN/OUT per TRUE date and hour, generate 2-4 random people.
     // Tracked persistently in MongoDB so refreshes don't re-add.
-    let carTracker = await stream0.findOne({ _id: 'car_people_tracker' }) || {};
+    let carTracker = await stream0.findOne({ _id: 'car_people_tracker_v2' }) || {};
 
     if (data1) {
       const trackerSetUpdates = {};
       const data1DateKeys = Object.keys(data1).filter(k => dateRegex.test(k));
 
       for (const dateKey of data1DateKeys) {
-        const carData = data1[dateKey]?.stream_1?.car;
-        if (!carData) continue;
+        if (!data1[dateKey]?.hourly_data) continue;
+        
+        for (const [hour, hData] of Object.entries(data1[dateKey].hourly_data)) {
+          const carData = hData.stream_1?.car;
+          if (!carData) continue;
 
-        const currentCarIn = carData.in_count || 0;
-        const currentCarOut = carData.out_count || 0;
-
-        const tracked = carTracker[dateKey] || { last_car_in: 0, last_car_out: 0, people_in: 0, people_out: 0 };
-
-        let peopleInDelta = 0;
-        let peopleOutDelta = 0;
-
-        // New cars IN → generate random people IN (2-4 per car)
-        if (currentCarIn > tracked.last_car_in) {
-          const diff = currentCarIn - tracked.last_car_in;
-          for (let i = 0; i < diff; i++) {
-            peopleInDelta += Math.floor(Math.random() * 3) + 2;
+          // Determine true date because of DB quirk
+          const hourNum = parseInt(hour.split(':')[0], 10);
+          let trueDate = dateKey;
+          if (dateKey === '2026-08-14' && hourNum >= 15) {
+            trueDate = '2026-08-13';
           }
-        }
+          
+          const trackerKey = `${trueDate}_${hour}`;
+          const currentCarIn = carData.in_count || 0;
+          const currentCarOut = carData.out_count || 0;
 
-        // New cars OUT → generate random people OUT (2-4 per car)
-        if (currentCarOut > tracked.last_car_out) {
-          const diff = currentCarOut - tracked.last_car_out;
-          for (let i = 0; i < diff; i++) {
-            peopleOutDelta += Math.floor(Math.random() * 3) + 2;
+          const tracked = carTracker[trackerKey] || { last_car_in: 0, last_car_out: 0, people_in: 0, people_out: 0, true_date: trueDate };
+
+          let peopleInDelta = 0;
+          let peopleOutDelta = 0;
+
+          if (currentCarIn > tracked.last_car_in) {
+            const diff = currentCarIn - tracked.last_car_in;
+            for (let i = 0; i < diff; i++) peopleInDelta += Math.floor(Math.random() * 3) + 2;
           }
-        }
 
-        // Update tracker if car counts changed OR if this date key is new
-        if (peopleInDelta > 0 || peopleOutDelta > 0 || !carTracker[dateKey]) {
-          const newPeopleIn = (tracked.people_in || 0) + peopleInDelta;
-          const newPeopleOut = (tracked.people_out || 0) + peopleOutDelta;
+          if (currentCarOut > tracked.last_car_out) {
+            const diff = currentCarOut - tracked.last_car_out;
+            for (let i = 0; i < diff; i++) peopleOutDelta += Math.floor(Math.random() * 3) + 2;
+          }
 
-          trackerSetUpdates[`${dateKey}.last_car_in`] = currentCarIn;
-          trackerSetUpdates[`${dateKey}.last_car_out`] = currentCarOut;
-          trackerSetUpdates[`${dateKey}.people_in`] = newPeopleIn;
-          trackerSetUpdates[`${dateKey}.people_out`] = newPeopleOut;
+          if (peopleInDelta > 0 || peopleOutDelta > 0 || !carTracker[trackerKey]) {
+            const newPeopleIn = (tracked.people_in || 0) + peopleInDelta;
+            const newPeopleOut = (tracked.people_out || 0) + peopleOutDelta;
 
-          // Update local copy for use in response building below
-          carTracker[dateKey] = {
-            last_car_in: currentCarIn,
-            last_car_out: currentCarOut,
-            people_in: newPeopleIn,
-            people_out: newPeopleOut
-          };
+            trackerSetUpdates[`${trackerKey}.last_car_in`] = currentCarIn;
+            trackerSetUpdates[`${trackerKey}.last_car_out`] = currentCarOut;
+            trackerSetUpdates[`${trackerKey}.people_in`] = newPeopleIn;
+            trackerSetUpdates[`${trackerKey}.people_out`] = newPeopleOut;
+            trackerSetUpdates[`${trackerKey}.true_date`] = trueDate;
+
+            carTracker[trackerKey] = {
+              last_car_in: currentCarIn,
+              last_car_out: currentCarOut,
+              people_in: newPeopleIn,
+              people_out: newPeopleOut,
+              true_date: trueDate
+            };
+          }
         }
       }
 
-      // Persist tracker to MongoDB (atomic $set, upsert if first time)
       if (Object.keys(trackerSetUpdates).length > 0) {
         await stream0.updateOne(
-          { _id: 'car_people_tracker' },
+          { _id: 'car_people_tracker_v2' },
           { $set: trackerSetUpdates },
           { upsert: true }
         );
@@ -151,6 +156,7 @@ app.get('/api/dashboard', async (req, res) => {
       stream_2: { out_count: 0 },
       stream_0_hourly: {},
       stream_1_hourly: {},
+      stream_2_hourly: {},
       peak_people: null
     };
 
@@ -186,41 +192,40 @@ app.get('/api/dashboard', async (req, res) => {
         Object.keys(data2).filter(k => dateRegex.test(k)).forEach(date => {
           const out_count = data2[date].stream_2?.out_count || 0;
           responsePayload.stream_2.out_count += out_count;
-        });
-      } else if (data0) {
-        Object.keys(data0).filter(k => dateRegex.test(k)).forEach(date => {
-          const out_count = data0[date].stream_0?.out_count || 0;
-          responsePayload.stream_2.out_count += out_count;
+          if (data2[date].hourly_data) {
+            Object.keys(data2[date].hourly_data).forEach(hour => {
+              const key = `${date} ${hour}`;
+              if (!responsePayload.stream_2_hourly[key]) {
+                responsePayload.stream_2_hourly[key] = { stream_2: { out_count: 0 }};
+              }
+              responsePayload.stream_2_hourly[key].stream_2.out_count += data2[date].hourly_data[hour].stream_2?.out_count || 0;
+            });
+          }
         });
       }
-    } else if (data2) {
+    } else if (data2 && data2[selectedDate]) {
       const dayData2 = data2[selectedDate];
-      if (dayData2) {
-        responsePayload.stream_2.out_count = dayData2.stream_2?.out_count || 0;
+      responsePayload.stream_2.out_count = dayData2.stream_2?.out_count || 0;
+      if (dayData2.hourly_data) {
+        responsePayload.stream_2_hourly = dayData2.hourly_data;
       }
-    } else if (data0 && data0[selectedDate]?.stream_0?.out_count !== undefined) {
-      responsePayload.stream_2.out_count = data0[selectedDate].stream_0.out_count;
     }
 
     // --- Add car-based people from tracker ---
     if (selectedDate === 'all') {
-      // Sum all date keys' tracked people
-      Object.keys(carTracker).filter(k => dateRegex.test(k)).forEach(dateKey => {
-        responsePayload.stream_0.in_count += carTracker[dateKey].people_in || 0;
-        responsePayload.stream_2.out_count += carTracker[dateKey].people_out || 0;
+      Object.keys(carTracker).forEach(key => {
+        if (key !== '_id' && carTracker[key].true_date) {
+          responsePayload.stream_0.in_count += carTracker[key].people_in || 0;
+          responsePayload.stream_2.out_count += carTracker[key].people_out || 0;
+        }
       });
     } else {
-      // Add this date's tracked people
-      if (carTracker[selectedDate]) {
-        responsePayload.stream_0.in_count += carTracker[selectedDate].people_in || 0;
-        responsePayload.stream_2.out_count += carTracker[selectedDate].people_out || 0;
-      }
-      // Handle DB quirk: evening hours (15-23) of Aug 13 stored under Aug 14 key
-      // Their car additions are tracked under '2026-08-14', so include them for Aug 13
-      if (selectedDate === '2026-08-13' && carTracker['2026-08-14']) {
-        responsePayload.stream_0.in_count += carTracker['2026-08-14'].people_in || 0;
-        responsePayload.stream_2.out_count += carTracker['2026-08-14'].people_out || 0;
-      }
+      Object.keys(carTracker).forEach(key => {
+        if (key !== '_id' && carTracker[key].true_date === selectedDate) {
+          responsePayload.stream_0.in_count += carTracker[key].people_in || 0;
+          responsePayload.stream_2.out_count += carTracker[key].people_out || 0;
+        }
+      });
     }
 
     // --- Stream 1 (Vehicle Analytics & Hourly Partitioning) ---
