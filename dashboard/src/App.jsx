@@ -210,51 +210,51 @@ function App() {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
         {/* Top Header & Date Filter Bar */}
-        <div className="mb-6 sm:mb-8 rounded-2xl bg-white p-4 sm:p-6 border border-gray-200 shadow-sm flex flex-col gap-4">
-          {/* Top Row: Title & Date Selector */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">Live Analytics Overview</h1>
-              <div className="mt-1.5 sm:mt-2 inline-flex flex-wrap items-center rounded-full bg-gray-50 px-3 sm:px-4 py-1 sm:py-1.5 border border-gray-200 gap-1.5 sm:gap-2">
-                <span className="text-[10px] sm:text-xs font-semibold text-gray-600">{formattedDate}</span>
-                <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                <span className="text-[10px] sm:text-xs font-bold text-indigo-600">{formattedTime}</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1.5 sm:gap-2 w-full sm:w-auto">
-               <p className="text-[10px] sm:text-xs text-gray-500 flex items-center sm:justify-end gap-1">
-                 <Clock className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-indigo-500" /> Filter metrics by date
-               </p>
-               <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-gray-50 px-3 sm:px-4 py-2 sm:py-2.5 shadow-inner hover:border-indigo-400 transition-colors w-full sm:w-auto">
-                 <Calendar className="w-4 sm:w-5 h-4 sm:h-5 text-indigo-600 flex-shrink-0" />
-                 <label htmlFor="date-select" className="sr-only">Select Date</label>
-                 <select
-                   id="date-select"
-                   value={selectedDate || data?.date || ''}
-                   onChange={handleDateChange}
-                   className="bg-transparent font-medium text-gray-800 text-xs sm:text-sm focus:outline-none cursor-pointer w-full"
-                 >
-                   {availableDates.map(date => (
-                     <option key={date} value={date}>
-                       {formatDateLabel(date)}
-                     </option>
-                   ))}
-                 </select>
-               </div>
+        <div className="mb-6 sm:mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between rounded-2xl bg-white p-4 sm:p-6 border border-gray-200 shadow-sm gap-4 sm:gap-6">
+          
+          {/* Left Block: Title & Live Clock */}
+          <div>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
+              Live Analytics Overview
+            </h1>
+            <div className="mt-2 inline-flex flex-wrap items-center rounded-full bg-gray-50 px-3.5 py-1.5 border border-gray-200 gap-2">
+              <span className="text-xs font-semibold text-gray-600">{formattedDate}</span>
+              <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+              <span className="text-xs font-bold text-indigo-600">{formattedTime}</span>
             </div>
           </div>
 
-          {/* Sub-bar: Organization & Logos */}
-          <div className="border-t border-gray-100 pt-3 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <span className="text-[11px] sm:text-xs font-medium text-gray-500 text-center sm:text-left">
-              Counting Organized and Managed by <span className="font-semibold text-gray-800">Creozen Ltd</span>
-            </span>
-            <div className="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
-              <img src={creozenLogo} alt="Creozen Ltd" className="h-6 sm:h-7 w-auto object-contain max-h-7" />
-              <span className="text-gray-300 font-light text-xs">×</span>
-              <img src={bitLogo} alt="Bannari Amman Institute of Technology" className="h-6 sm:h-7 w-auto object-contain max-h-7" />
+          {/* Center Block: Organizers Branding (Centered in Mobile & Desktop) */}
+          <div className="flex flex-col items-center text-center justify-center gap-1.5 text-xs text-gray-500 border-t border-gray-100 pt-3 lg:border-t-0 lg:pt-0 w-full lg:w-auto">
+            <span className="font-medium text-gray-500 text-[11px] sm:text-xs">Counting Organized and Managed by</span>
+            <div className="flex items-center gap-2.5 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-200/80">
+              <img src={creozenLogo} alt="Creozen" className="h-6 sm:h-7 w-auto object-contain" />
+              <span className="text-xs font-bold text-gray-400">×</span>
+              <img src={bitLogo} alt="Bannari Amman Institute of Technology" className="h-9 sm:h-11 w-auto object-contain" />
             </div>
+          </div>
+
+          {/* Right Block: Date Filter */}
+          <div className="flex flex-col gap-1.5 w-full lg:w-auto lg:items-end border-t border-gray-100 pt-3 lg:border-t-0 lg:pt-0">
+             <p className="text-xs text-gray-500 flex items-center gap-1.5 font-medium">
+               <Clock className="w-3.5 h-3.5 text-indigo-500" /> Filter metrics by date
+             </p>
+             <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 shadow-inner hover:border-indigo-400 transition-colors w-full sm:w-auto min-w-[220px]">
+               <Calendar className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+               <label htmlFor="date-select" className="sr-only">Select Date</label>
+               <select
+                 id="date-select"
+                 value={selectedDate || data?.date || ''}
+                 onChange={handleDateChange}
+                 className="bg-transparent font-medium text-gray-800 text-xs sm:text-sm focus:outline-none cursor-pointer w-full"
+               >
+                 {availableDates.map(date => (
+                   <option key={date} value={date}>
+                     {formatDateLabel(date)}
+                   </option>
+                 ))}
+               </select>
+             </div>
           </div>
         </div>
 
